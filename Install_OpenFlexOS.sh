@@ -27,6 +27,7 @@
         apt -y install xscreensaver
         apt -y install feh
         apt -y install rofi
+        apt -y install dmenu
         apt -y install arandr
         apt -y install wget
         apt -y install xarchiver
@@ -62,8 +63,9 @@
         apt -y install network-manager
         apt -y install curl
 
-        git clone https://github.com/zsh-users/zsh-autosuggestions.git /usr/share/zsh-autosuggestions
-        git clone https://github.com/zsh-users/zsh-history-substring-search /usr/share/zsh-history-substring-search
+        git clone https://github.com/zsh-users/zsh-autosuggestions.git /usr/share/zsh/plugins/zsh-autosuggestions
+        git clone https://github.com/zsh-users/zsh-history-substring-search /usr/share/zsh/plugins/zsh-history-substring-search
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /usr/share/zsh/plugins/zsh-syntax-highlighting
 
         wget -P /tmp/ https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip
         sudo unzip -d /usr/share/fonts /tmp/NerdFontsSymbolsOnly.zip
@@ -162,19 +164,19 @@
             echo "Copying files to $user_home"
 
             mkdir -p $user_home/.config
-            cp -r assets/config/$lower_main $user_home/.config/$lower_main
-            cp -r assets/config/gtk-3.0 $user_home/.config/gtk-3.0
-            cp -r assets/config/Kvantum/ $user_home/.config/Kvantum
-            cp -r assets/config/qt5ct/ $user_home/.config/qt5ct
-            cp -r assets/config/qt6ct/ $user_home/.config/qt6ct
-            cp -r assets/config/picom $user_home/.config/picom
-            cp -r assets/config/sxiv $user_home/.config/sxiv
-            cp -r assets/config/wallpapers/ $user_home/.config/wallpapers/
-            cp assets/dot.gtkrc-2.0 $user_home/.gtkrc-2.0
-            cp assets/dot.xscreensaver $user_home/.xscreensaver
-            cp assets/dot.zshrc $user_home/.zshrc
-            cp assets/dot.bashrc $user_home/.bashrc
-            cp assets/dot.p10k.zsh $user_home/.p10k.zsh
+            cp -r OpenFlexOS-Configs/config/$lower_main $user_home/.config/$lower_main
+            cp -r OpenFlexOS-Configs/config/gtk-3.0 $user_home/.config/gtk-3.0
+            cp -r OpenFlexOS-Configs/config/Kvantum/ $user_home/.config/Kvantum
+            cp -r OpenFlexOS-Configs/config/qt5ct/ $user_home/.config/qt5ct
+            cp -r OpenFlexOS-Configs/config/qt6ct/ $user_home/.config/qt6ct
+            cp -r OpenFlexOS-Configs/config/picom $user_home/.config/picom
+            cp -r OpenFlexOS-Configs/config/sxiv $user_home/.config/sxiv
+            cp -r OpenFlexOS-Configs/config/wallpapers/ $user_home/.config/wallpapers/
+            cp OpenFlexOS-Configs/dot.gtkrc-2.0 $user_home/.gtkrc-2.0
+            cp OpenFlexOS-Configs/dot.xscreensaver $user_home/.xscreensaver
+            cp OpenFlexOS-Configs/dot.zshrc $user_home/.zshrc
+            cp OpenFlexOS-Configs/dot.bashrc $user_home/.bashrc
+            cp OpenFlexOS-Configs/dot.p10k.zsh $user_home/.p10k.zsh
             git clone https://github.com/romkatv/powerlevel10k.git $user_home/.config/powerlevel10k/
             chsh -s "$zsh_path" $user_to_copy
             chown -R $user_to_copy:$user_to_copy $user_home
@@ -198,12 +200,18 @@
             echo "QT_FONT_DPI=96" >> /etc/environment
         }
 
+# Function: clone configs
+    clone_configs () {
+        git clone https://github.com/chriskevinlee/OpenFlexOS-Configs.git
+    }
+
+
 # Function: Enables sddm and copy config files
         enable_copytheme_ssdm () {
             systemctl enable sddm
             sddm --example-config > /etc/sddm.conf
             mkdir -p /usr/share/sddm/themes/
-            cp -r assets/corners /usr/share/sddm/themes/
+            cp -r OpenFlexOS-Configs/corners /usr/share/sddm/themes/
             sed -i s/Current=debian-theme/Current=corners/ /etc/sddm.conf
         }
 
@@ -212,42 +220,42 @@
             if [[ ! -d /etc/skel/.config ]]; then
                 mkdir /etc/skel/.config
                 if [[ ! -d /etc/skel/.config/wallpapers ]]; then
-                    cp -r assets/config/wallpapers/ /etc/skel/.config/wallpapers/
+                    cp -r OpenFlexOS-Configs/config/wallpapers/ /etc/skel/.config/wallpapers/
                 else
                     echo "Wallpapers directory already exists. Skipping copy."
                 fi
-                cp -r assets/config/$lower_main /etc/skel/.config/$lower_main
-                cp -r assets/config/gtk-3.0 /etc/skel/.config/gtk-3.0
-                cp -r assets/config/Kvantum/ /etc/skel/.config/Kvantum
-                cp -r assets/config/qt5ct/ /etc/skel/.config/qt5ct
-                cp -r assets/config/qt6ct/ /etc/skel/.config/qt6ct
-                cp -r assets/config/picom /etc/skel/.config/picom
-                cp -r assets/config/sxiv /etc/skel/.config/sxiv
-                cp assets/dot.gtkrc-2.0 /etc/skel/.gtkrc-2.0
-                cp assets/dot.xscreensaver /etc/skel/.xscreensaver
-                cp assets/dot.zshrc /etc/skel/.zshrc
-                cp assets/dot.bashrc /etc/skel/.bashrc
-                cp assets/dot.p10k.zsh /etc/skel/.p10k.zsh
+                cp -r OpenFlexOS-Configs/config/$lower_main /etc/skel/.config/$lower_main
+                cp -r OpenFlexOS-Configs/config/gtk-3.0 /etc/skel/.config/gtk-3.0
+                cp -r OpenFlexOS-Configs/config/Kvantum/ /etc/skel/.config/Kvantum
+                cp -r OpenFlexOS-Configs/config/qt5ct/ /etc/skel/.config/qt5ct
+                cp -r OpenFlexOS-Configs/config/qt6ct/ /etc/skel/.config/qt6ct
+                cp -r OpenFlexOS-Configs/config/picom /etc/skel/.config/picom
+                cp -r OpenFlexOS-Configs/config/sxiv /etc/skel/.config/sxiv
+                cp OpenFlexOS-Configs/dot.gtkrc-2.0 /etc/skel/.gtkrc-2.0
+                cp OpenFlexOS-Configs/dot.xscreensaver /etc/skel/.xscreensaver
+                cp OpenFlexOS-Configs/dot.zshrc /etc/skel/.zshrc
+                cp OpenFlexOS-Configs/dot.bashrc /etc/skel/.bashrc
+                cp OpenFlexOS-Configs/dot.p10k.zsh /etc/skel/.p10k.zsh
                 chmod -R +x /etc/skel/.config/$lower_main/scripts/
                 git clone https://github.com/romkatv/powerlevel10k.git /etc/skel/.config/powerlevel10k/
             elif [[  -d /etc/skel/.config ]]; then
                 if [[ ! -d /etc/skel/.config/wallpapers ]]; then
-                    cp -r assets/config/wallpapers/ /etc/skel/.config/wallpapers/
+                    cp -r OpenFlexOS-Configs/config/wallpapers/ /etc/skel/.config/wallpapers/
                 else
                     echo "Wallpapers directory already exists. Skipping copy."
                 fi
-                cp -r assets/config/$lower_main /etc/skel/.config/$lower_main
-                cp -r assets/config/gtk-3.0 /etc/skel/.config/gtk-3.0
-                cp -r assets/config/Kvantum/ /etc/skel/.config/Kvantum
-                cp -r assets/config/qt5ct/ /etc/skel/.config/qt5ct
-                cp -r assets/config/qt6ct/ /etc/skel/.config/qt6ct
-                cp -r assets/config/picom /etc/skel/.config/picom
-                cp -r assets/config/sxiv /etc/skel/.config/sxiv
-                cp assets/dot.gtkrc-2.0 /etc/skel/.gtkrc-2.0
-                cp assets/dot.xscreensaver /etc/skel/.xscreensaver
-                cp assets/dot.zshrc /etc/skel/.zshrc
-                cp assets/dot.bashrc /etc/skel/.bashrc
-                cp assets/dot.p10k.zsh /etc/skel/.p10k.zsh
+                cp -r OpenFlexOS-Configs/config/$lower_main /etc/skel/.config/$lower_main
+                cp -r OpenFlexOS-Configs/config/gtk-3.0 /etc/skel/.config/gtk-3.0
+                cp -r OpenFlexOS-Configs/config/Kvantum/ /etc/skel/.config/Kvantum
+                cp -r OpenFlexOS-Configs/config/qt5ct/ /etc/skel/.config/qt5ct
+                cp -r OpenFlexOS-Configs/config/qt6ct/ /etc/skel/.config/qt6ct
+                cp -r OpenFlexOS-Configs/config/picom /etc/skel/.config/picom
+                cp -r OpenFlexOS-Configs/config/sxiv /etc/skel/.config/sxiv
+                cp OpenFlexOS-Configs/dot.gtkrc-2.0 /etc/skel/.gtkrc-2.0
+                cp OpenFlexOS-Configs/dot.xscreensaver /etc/skel/.xscreensaver
+                cp OpenFlexOS-Configs/dot.zshrc /etc/skel/.zshrc
+                cp OpenFlexOS-Configs/dot.bashrc /etc/skel/.bashrc
+                cp OpenFlexOS-Configs/dot.p10k.zsh /etc/skel/.p10k.zsh
                 chmod -R +x /etc/skel/.config/$lower_main/scripts/
                 git clone https://github.com/romkatv/powerlevel10k.git /etc/skel/.config/powerlevel10k/ 
             fi
@@ -255,14 +263,14 @@
 
 # Function: Miscellaneous configurations 
     miscellaneous_configs () {
-         cp assets/wallpaper_changer.sh /usr/local/bin/wallpaper_changer.sh
+         cp OpenFlexOS-Configs/wallpaper_changer.sh /usr/local/bin/wallpaper_changer.sh
         chmod +x /usr/local/bin/wallpaper_changer.sh
-        cp assets/wallpaper.desktop /usr/share/applications/wallpaper.desktop
+        cp OpenFlexOS-Configs/wallpaper.desktop /usr/share/applications/wallpaper.desktop
 
-        cp -r assets/Midnight-Red /usr/share/themes/Midnight-Red
-        cp -r assets/Midnight-Green /usr/share/themes/Midnight-Green
-        cp -r assets/Arc-Darkest /usr/share/themes/Arc-Darkest
-        cp -r assets/Vivid-Dark-Icons /usr/share/icons/Vivid-Dark-Icons
+        cp -r OpenFlexOS-Configs/Midnight-Red /usr/share/themes/Midnight-Red
+        cp -r OpenFlexOS-Configs/Midnight-Green /usr/share/themes/Midnight-Green
+        cp -r OpenFlexOS-Configs/Arc-Darkest /usr/share/themes/Arc-Darkest
+        cp -r OpenFlexOS-Configs/Vivid-Dark-Icons /usr/share/icons/Vivid-Dark-Icons
                             
         mkdir -p /usr/share/zsh/plugins/zsh-sudo
         wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/sudo/sudo.plugin.zsh -P /usr/share/zsh/plugins/zsh-sudo
@@ -341,6 +349,8 @@
                     echo "Keywords=wm;tiling" >> /usr/share/xsessions/qtile.desktop
 
                     install_packages
+
+                    clone_configs
                     
                     enable_copytheme_ssdm
 
@@ -363,6 +373,8 @@
                     apt -y install tint2 # status bar Window Manager
                     apt -y install obconf # Set Openbox Theme
                     install_packages
+
+                    clone_configs
                     
                     enable_copytheme_ssdm
 
@@ -372,7 +384,7 @@
 
                     miscellaneous_configs
 
-                    cp -r assets/Vedanta-dark-openbox /usr/share/themes/Vedanta-dark-openbox
+                    cp -r OpenFlexOS-Configs/Vedanta-dark-openbox /usr/share/themes/Vedanta-dark-openbox
 
                     users_function
                 ;;
