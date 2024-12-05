@@ -426,10 +426,10 @@
                     exit 0
                 ;;
                 "Reboot" )
-                    reboot
+                    systemctl reboot
                 ;;
                 "PowerOff" )
-                    poweroff
+                    systemctl poweroff
                 ;;
         esac
     clear
