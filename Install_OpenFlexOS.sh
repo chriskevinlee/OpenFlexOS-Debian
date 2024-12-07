@@ -289,14 +289,14 @@
         chmod +s /sbin/reboot               
         clear
         # Setup hibination
-       # SWAP_INFO=$(swapon --show --noheadings)
-       # SWAP_DEVICE=$(echo "$SWAP_INFO" | awk '{print $1}')
+        SWAP_INFO=$(sudo swapon --show --noheadings)
+        SWAP_DEVICE=$(echo "$SWAP_INFO" | awk '{print $1}')
 
         # Configure resume in initramfs-tools
-       # echo "RESUME=$SWAP_DEVICE" | sudo tee /etc/initramfs-tools/conf.d/resume
+        echo "RESUME=$SWAP_DEVICE" | sudo tee /etc/initramfs-tools/conf.d/resume
 
         # Regenerate initramfs
-        #sudo update-initramfs -u
+        sudo update-initramfs -u
 
         sed -i  's|SHELL=/bin/sh|SHELL=/bin/zsh|' /etc/default/useradd
 
