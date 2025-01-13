@@ -222,7 +222,7 @@
             sddm --example-config > /etc/sddm.conf
             mkdir -p /usr/share/sddm/themes/
             cp -r OpenFlexOS-Configs/corners /usr/share/sddm/themes/
-            sed -i s/Current=debian-theme/Current=corners/ /etc/sddm.conf
+            sudo sed -i 's/^Current=.*/Current=corners/' /etc/sddm.conf
         }
 
 # Function: Copy config files to /etc/skel for newly created usersf
