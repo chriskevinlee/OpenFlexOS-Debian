@@ -67,9 +67,19 @@
         git clone https://github.com/zsh-users/zsh-history-substring-search /usr/share/zsh/plugins/zsh-history-substring-search
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /usr/share/zsh/plugins/zsh-syntax-highlighting
 
-        wget -P /tmp/ https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip
+        
+        wget -O /tmp/NerdFontsSymbolsOnly.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip
         sudo unzip -d /usr/share/fonts /tmp/NerdFontsSymbolsOnly.zip
         sudo fc-cache -fv
+
+        apt -y install libconfig-dev libdbus-1-dev libegl-dev libev-dev libgl-dev libepoxy-dev libpcre2-dev libpixman-1-dev libx11-xcb-dev libxcb1-dev libxcb-composite0-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-glx0-dev libxcb-image0-dev libxcb-present-dev libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev libxcb-shape0-dev libxcb-util-dev libxcb-xfixes0-dev libxext-dev meson ninja-build uthash-dev
+        
+        cd /tmp
+        git clone https://github.com/FT-Labs/picom.git
+        cd picom
+        meson setup --buildtype=release build
+        ninja -C build
+        ninja -C build install
     }
 
 # Function: Get zsh path, checks to see if any users already exists if not it ask the user to create a user and allows user to copy config files to already existing users and added users
@@ -212,7 +222,7 @@
             sddm --example-config > /etc/sddm.conf
             mkdir -p /usr/share/sddm/themes/
             cp -r OpenFlexOS-Configs/corners /usr/share/sddm/themes/
-            sed -i s/Current=debian-theme/Current=corners/ /etc/sddm.conf
+            sudo sed -i 's/^Current=.*/Current=corners/' /etc/sddm.conf
         }
 
 # Function: Copy config files to /etc/skel for newly created usersf
@@ -279,24 +289,73 @@
         chmod +s /sbin/reboot               
         clear
         # Setup hibination
-        SWAP_INFO=$(swapon --show --noheadings)
+        SWAP_INFO=$(sudo swapon --show --noheadings)
         SWAP_DEVICE=$(echo "$SWAP_INFO" | awk '{print $1}')
 
-        # Configure resume in initramfs-tools
-        echo "RESUME=$SWAP_DEVICE" | sudo tee /etc/initramfs-tools/conf.d/resume
+        if [[ "$SWAP_DEVICE" == /dev/* ]]; then
+                # Configure resume in initramfs-tools
+                echo "RESUME=$SWAP_DEVICE" | sudo tee /etc/initramfs-tools/conf.d/resume
 
-        # Regenerate initramfs
-        sudo update-initramfs -u
+                # Regenerate initramfs
+                sudo update-initramfs -u
+
+                # Update GRUB to include resume parameter
+                sudo sed -i "s|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"resume=$SWAP_DEVICE\"|" /etc/default/grub
+                sudo update-grub
+
+        else
+
+                mem=$(free | grep Mem | awk '{print $2}') # Memory in KB
+                increase_swap=$((2048 * 1024)) # Increase in bytes (2GB in KB)
+                mem_swap=$((mem + increase_swap)) # Total swap size in KB
+
+                # Create the swap file
+                sudo swapoff -a
+                sudo rm -f /swap.img
+                sudo dd if=/dev/zero of=/swap.img bs=1MiB count=$((mem_swap / 1024)) status=progress
+                sudo chmod 600 /swap.img
+                sudo mkswap /swap.img
+                sudo swapon /swap.img
+
+
+
+                # Get root drive UUID for GRUB update
+                root_drive_uuid=$(grep root /proc/cmdline | awk '{print $2}' | cut -d "=" -f 2,3 | sed 's/^UUID=/resume=UUID=/')
+
+                # Get swap offset
+                swap_offset=$(sudo filefrag -v /swap.img | grep '^ *0:' | awk '{print $4}' | cut -d "." -f 1 | sed 's/^/resume_offset=/')
+
+                # Update GRUB
+                #sudo sed -i "s|GRUB_CMDLINE_LINUX_DEFAULT=|GRUB_CMDLINE_LINUX_DEFAULT=$root_drive_uuid $swap_offset |g" /etc/default/grub
+                sudo sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"${root_drive_uuid} ${swap_offset}\"|g" /etc/default/grub
+                sudo update-grub
+        fi
 
         sed -i  's|SHELL=/bin/sh|SHELL=/bin/zsh|' /etc/default/useradd
 
-        # Update GRUB to include resume parameter
-        sudo sed -i "s|GRUB_CMDLINE_LINUX=\"\"|GRUB_CMDLINE_LINUX=\"resume=$SWAP_DEVICE\"|" /etc/default/grub
-        sudo update-grub
+        apt -y remove ifupdown
+        mv /etc/network/interfaces /etc/network/interfaces.BK
 
-    apt -y remove ifupdown
-    mv /etc/network/interfaces /etc/network/interfaces.BK
-    }
+        os=$(grep ^"NAME=" /etc/os-release | awk -F '"' '{print $2}')
+            if [[ $os=Ubuntu ]]; then
+
+            # get volume percent to work
+            apt install pulseaudio-utils
+
+            # install firefox and create a desktop file
+            apt install firefox
+            echo [Desktop Entry] >>  /usr/share/applications/firefox.desktop
+            echo Name=Firefox >> /usr/share/applications/firefox.desktop
+            echo Exec=/usr/bin/firefox >> /usr/share/applications/firefox.desktop
+            echo Icon=firefox >> /usr/share/applications/firefox.desktop
+            echo Categories=Network;WebBrowser; >> /usr/share/applications/firefox.desktop
+
+            # Get networkmanager to work
+            cp OpenFlexOS-Configs/60-cloud-init.yaml /etc/netplan
+            sudo netplan apply
+        fi
+
+}
 
 # If the User selects y the installation will start
     if [[ $yn = y ]]; then
@@ -417,10 +476,10 @@
                     exit 0
                 ;;
                 "Reboot" )
-                    reboot
+                    systemctl reboot
                 ;;
                 "PowerOff" )
-                    poweroff
+                    systemctl poweroff
                 ;;
         esac
     clear
