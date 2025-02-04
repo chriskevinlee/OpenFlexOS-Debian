@@ -62,6 +62,7 @@
         apt -y install python3-psutil
         apt -y install network-manager
         apt -y install curl
+        apt -y install xbindkeys sxhkd playerctl
 
         git clone https://github.com/zsh-users/zsh-autosuggestions.git /usr/share/zsh/plugins/zsh-autosuggestions
         git clone https://github.com/zsh-users/zsh-history-substring-search /usr/share/zsh/plugins/zsh-history-substring-search
