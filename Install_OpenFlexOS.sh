@@ -58,6 +58,7 @@
         apt -y install dunst
         apt -y install picom
         apt -y install wmctrl
+        apt -y install zenity
         apt -y install galculator
         apt -y install python3-psutil
         apt -y install network-manager
