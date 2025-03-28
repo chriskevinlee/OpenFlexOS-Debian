@@ -35,7 +35,6 @@
         apt -y install unzip
         apt -y install xdg-user-dirs
         apt -y install alacritty
-        apt -y install conky-all
         apt -y install lsd
         apt -y install bat
         apt -y install pavucontrol-qt
