@@ -423,6 +423,7 @@
                     pip3 install xcffib==0.12.1 --break-system-packages
                     pip3 install --no-cache-dir --no-build-isolation cairocffi==1.4.0 --break-system-packages
                     pip3 install git+https://github.com/qtile/qtile --break-system-packages
+                    pip install qtile-extras --break-system-packages
                     mkdir /usr/share/xsessions/
                     echo "[Desktop Entry]" >> /usr/share/xsessions/qtile.desktop
                     echo "Name=Qtile" >> /usr/share/xsessions/qtile.desktop
