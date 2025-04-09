@@ -27,7 +27,13 @@
         apt -y install xscreensaver
         apt -y install feh
         apt -y install rofi
-        apt -y install dmenu
+        apt -y install libxinerama-dev
+        apt -y install libxft-dev
+        git clone https://github.com/chriskevinlee/dmenu.git
+        cd dmenu
+        sudo make clean install
+        sudo make install
+        cd
         apt -y install arandr
         apt -y install wget
         apt -y install xarchiver
