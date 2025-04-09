@@ -208,8 +208,8 @@
             cp OpenFlexOS-Configs/dot.xscreensaver $user_home/.xscreensaver
             cp OpenFlexOS-Configs/dot.zshrc $user_home/.zshrc
             cp OpenFlexOS-Configs/dot.bashrc $user_home/.bashrc
-            cp OpenFlexOS-Configs/dot.p10k.zsh $user_home/.p10k.zsh
-            git clone https://github.com/romkatv/powerlevel10k.git $user_home/.config/powerlevel10k/
+            cp -r OpenFlexOS-Configs/config/ohmyposh/ $user_home/.config/
+            sudo curl -s https://ohmyposh.dev/install.sh | sudo bash -s -- -d /usr/local/bin
             chsh -s "$zsh_path" $user_to_copy
             chown -R $user_to_copy:$user_to_copy $user_home
             chmod -R +x $user_home/.config/$lower_main/scripts/
