@@ -273,9 +273,9 @@
                 cp OpenFlexOS-Configs/dot.xscreensaver /etc/skel/.xscreensaver
                 cp OpenFlexOS-Configs/dot.zshrc /etc/skel/.zshrc
                 cp OpenFlexOS-Configs/dot.bashrc /etc/skel/.bashrc
-                cp OpenFlexOS-Configs/dot.p10k.zsh /etc/skel/.p10k.zsh
+                cp -r OpenFlexOS-Configs/config/ohmyposh/ /etc/skel/.config/ohmyposh/
                 chmod -R +x /etc/skel/.config/$lower_main/scripts/
-                git clone https://github.com/romkatv/powerlevel10k.git /etc/skel/.config/powerlevel10k/
+                sudo curl -s https://ohmyposh.dev/install.sh | sudo bash -s -- -d /usr/local/bin
             elif [[  -d /etc/skel/.config ]]; then
                 if [[ ! -d /etc/skel/.config/wallpapers ]]; then
                     cp -r OpenFlexOS-Configs/config/wallpapers/ /etc/skel/.config/wallpapers/
@@ -293,9 +293,9 @@
                 cp OpenFlexOS-Configs/dot.xscreensaver /etc/skel/.xscreensaver
                 cp OpenFlexOS-Configs/dot.zshrc /etc/skel/.zshrc
                 cp OpenFlexOS-Configs/dot.bashrc /etc/skel/.bashrc
-                cp OpenFlexOS-Configs/dot.p10k.zsh /etc/skel/.p10k.zsh
+                cp -r OpenFlexOS-Configs/config/ohmyposh/ /etc/skel/.config/ohmyposh/
                 chmod -R +x /etc/skel/.config/$lower_main/scripts/
-                git clone https://github.com/romkatv/powerlevel10k.git /etc/skel/.config/powerlevel10k/ 
+                sudo curl -s https://ohmyposh.dev/install.sh | sudo bash -s -- -d /usr/local/bin
             fi
     }
 
